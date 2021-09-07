@@ -4,33 +4,71 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
-import android.widget.Button;
+import android.view.View;
+import android.widget.TextView;
 
+import com.jesen.annotationlib.Subscribe;
+import com.jesen.annotationlib.mode.ThreadMode;
+import com.jesen.eventbus.EventBus;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
-
-    private Button toSecond;
+    private TextView tv;
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            if (msg.what == 163) {
+                UserInfo user = (UserInfo) msg.obj;
+                tv.setText(user.toString());
+            }
+            return true;
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        toSecond = findViewById(R.id.toSecond);
-        toSecond.setOnClickListener(view -> toSecondPage());
+        tv = findViewById(R.id.tv);
+        EventBus.getDefault().addIndex(new EventBusIndex());
+        EventBus.getDefault().register(this);
     }
 
-    private void toSecondPage() {
+    // 跳转按钮
+    public void jump(View view) {
+        startActivity(new Intent(this, OtherActivity.class));
+    }
 
+    // 粘性按钮
+    public void sticky(View view) {
+        EventBus.getDefault().postSticky(new UserInfo("simon", 35));
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void abc(UserInfo user) {
+        Message msg = new Message();
+        msg.obj = user;
+        msg.what = 163;
+        handler.sendMessage(msg);
+        Log.e("abc", user.toString());
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC, priority = 1)
+    public void abc2(UserInfo user) {
+        //tv.setText(user.toString());
+        Log.e("abc2", user.toString());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+        EventBus.clearCaches();
     }
-
 }
