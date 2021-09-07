@@ -1,4 +1,4 @@
-package com.jesen.andenventbustalk;
+package com.jesen.eventbustest;
 
 import android.app.Application;
 

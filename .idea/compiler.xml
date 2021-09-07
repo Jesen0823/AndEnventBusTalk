@@ -4,6 +4,7 @@
     <bytecodeTargetLevel target="1.7">
       <module name="AndEnventBusTalk.app" target="11" />
       <module name="AndEnventBusTalk.eventbus" target="11" />
+      <module name="AndEnventBusTalk.EventBusTest" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
