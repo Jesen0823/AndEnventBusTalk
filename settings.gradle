@@ -8,3 +8,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "AndEnventBusTalk"
 include ':app'
+include ':eventbus_annotation_lib'
+include ':leventbus_compiler_lib'
+include ':eventbus'
